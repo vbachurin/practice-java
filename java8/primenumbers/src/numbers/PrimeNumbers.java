@@ -1,4 +1,4 @@
-package primenumbers;
+package numbers;
 
 import java.util.stream.IntStream;
 
