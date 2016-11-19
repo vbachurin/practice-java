@@ -25,19 +25,19 @@ object MostPopularSuperhero2 {
   print(countCoOccurrences("5988 748 1722 3752 4655 5743 1872 3413 5527 6368 6085 4319 4728 1636 2397 3364 "))
                                                   //> (5988,15)
 
-  // Create a SparkContext using every core of the local machine
   val sc = new SparkContext("local[*]", "MostPopularSuperhero2")
                                                   //> Using Spark's default log4j profile: org/apache/spark/log4j-defaults.propert
                                                   //| ies
-                                                  //| sc  : org.apache.spark.SparkContext = org.apache.spark.SparkContext@62577d6
+                                                  //| sc  : org.apache.spark.SparkContext = org.apache.spark.SparkContext@6b5f8707
                                                   //| 
 
-	System.getProperty("user.dir")            //> res0: String = D:\Java\eclipse
-	
+  System.getProperty("user.dir")                  //> res0: String = D:\Java\eclipse
+  
+
   // Build up a hero ID -> name RDD
-  val names = sc.textFile("marvel-names.txt")     //> names  : org.apache.spark.rdd.RDD[String] = marvel-names.txt MapPartitionsR
-                                                  //| DD[1] at textFile at com.sundogsoftware.spark.MostPopularSuperhero2.scala:3
-                                                  //| 3
+  val names = sc.textFile("marvel-names.txt")     //> names  : org.apache.spark.rdd.RDD[String] = marvel-names.txt MapPartitionsRD
+                                                  //| D[1] at textFile at com.sundogsoftware.spark.MostPopularSuperhero2.scala:33
+                                                  //| 
 
   val namesRdd = names.flatMap(parseNames)        //> namesRdd  : org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[2] a
                                                   //| t flatMap at com.sundogsoftware.spark.MostPopularSuperhero2.scala:35
@@ -50,33 +50,21 @@ object MostPopularSuperhero2 {
                                                   //| ap at com.sundogsoftware.spark.MostPopularSuperhero2.scala:39
 
   val totalFriendsByCharacter = pairings.reduceByKey((x, y) => x + y)
-                                                  //> org.apache.hadoop.mapred.InvalidInputException: Input path does not exist: 
-                                                  //| file:/D:/Java/eclipse/marvel-graph.txt
-                                                  //| 	at org.apache.hadoop.mapred.FileInputFormat.singleThreadedListStatus(Fil
-                                                  //| eInputFormat.java:287)
-                                                  //| 	at org.apache.hadoop.mapred.FileInputFormat.listStatus(FileInputFormat.j
-                                                  //| ava:229)
-                                                  //| 	at org.apache.hadoop.mapred.FileInputFormat.getSplits(FileInputFormat.ja
-                                                  //| va:315)
-                                                  //| 	at org.apache.spark.rdd.HadoopRDD.getPartitions(HadoopRDD.scala:199)
-                                                  //| 	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:248)
-                                                  //| 	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:246)
-                                                  //| 	at scala.Option.getOrElse(Option.scala:121)
-                                                  //| 	at org.apache.spark.rdd.RDD.partitions(RDD.scala:246)
-                                                  //| 	at org.apache.spark.rdd.MapPartitionsRDD.getPartitions(MapPartitionsRDD.
-                                                  //| scala:35)
-                                                  //| 	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(RDD.scala:248)
-                                                  //| 	at org.apache.spark.rdd.RDD$$anonfun$partitions$2.apply(
-                                                  //| Output exceeds cutoff limit.
+                                                  //> totalFriendsByCharacter  : org.apache.spark.rdd.RDD[(Int, Int)] = ShuffledR
+                                                  //| DD[6] at reduceByKey at com.sundogsoftware.spark.MostPopularSuperhero2.scal
+                                                  //| a:41
 
-  totalFriendsByCharacter.take(1)
   val flipped = totalFriendsByCharacter.map(x => (x._2, x._1))
-
-  flipped.take(1)
-
-  val mostPopular = flipped.max()
+                                                  //> flipped  : org.apache.spark.rdd.RDD[(Int, Int)] = MapPartitionsRDD[7] at ma
+                                                  //| p at com.sundogsoftware.spark.MostPopularSuperhero2.scala:43
   
+  val mostPopular = flipped.max()                 //> [Stage 0:>                                                          (0 + 2
+                                                  //| ) / 2][Stage 0:=============================>                             
+                                                  //| (1 + 1) / 2]                                                              
+                                                  //|                   mostPopular  : (Int, Int) = (1933,859)
   val mostPopularName = namesRdd.lookup(mostPopular._2)(0)
-
+                                                  //> mostPopularName  : String = CAPTAIN AMERICA
+  
   println(s"$mostPopularName is the most popular superhero with ${mostPopular._1} co-appearances.")
+                                                  //> CAPTAIN AMERICA is the most popular superhero with 1933 co-appearances.
 }

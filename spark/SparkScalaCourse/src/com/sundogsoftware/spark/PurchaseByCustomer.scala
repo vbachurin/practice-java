@@ -17,7 +17,7 @@ object PurchaseByCustomer {
     
     val sc = new SparkContext("local[*]", "PurchaseByCustomer")
     
-    val input = sc.textFile("customer-orders.csv")
+    val input = sc.textFile("../customer-orders.csv")
     
     val rows = input.map(extractCustomerPricePairs)
     
